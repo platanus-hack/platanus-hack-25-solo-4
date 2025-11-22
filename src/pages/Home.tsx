@@ -53,10 +53,10 @@ export function Home() {
                 <span className="italic">tu catálogo empieza aquí.</span>
             </h1>
 
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto w-full flex gap-3 flex-col">
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto w-full flex gap-2 flex-col">
                 <input 
                     type="text" 
-                    placeholder="@usuario" 
+                    placeholder="@usuario"  
                     value={handle}
                     onChange={(e) => setHandle(e.target.value)}
                     className="flex-1 px-4 py-3 rounded-lg border border-gray-200 bg-transparent focus:ring-2 focus:ring-black outline-none transition text-lg"
