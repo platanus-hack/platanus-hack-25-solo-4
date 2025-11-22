@@ -125,7 +125,7 @@ export const createPreference = internalAction({
                             unit_price: args.price,
                             quantity: 1,
                             picture_url: args.imageUrl,
-                            currency_id: args.currency || "ARS", 
+                            currency_id: "CLP", 
                         }
                     ],
                     back_urls: {

@@ -9,7 +9,6 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 export interface ExtractedProductData {
   productName: string;
   price: number;
-  currency: string;
   size: string | null;
 }
 

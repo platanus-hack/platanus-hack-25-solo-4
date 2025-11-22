@@ -38,7 +38,7 @@ export const ingestInstagramPosts = internalAction({
         // Ensure price is number
         const safePrice: number = extracted.price;
 
-        console.log(`Found product: ${extracted.productName} - ${extracted.price} ${extracted.currency}`);
+        console.log(`Found product: ${extracted.productName} - ${safePrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}`);
 
         // 3. Image Processing
         const processedImageUrl = await processAndUploadProductImage(ctx, post.displayUrl, extracted.productName) || post.displayUrl;
@@ -63,7 +63,7 @@ export const ingestInstagramPosts = internalAction({
         results.push({
           productName: extracted.productName,
           price: safePrice,
-          currency: extracted.currency,
+          currency: "CLP",
           size: extracted.size || undefined,
           originalImageUrl: post.displayUrl,
           processedImageUrl: processedImageUrl,

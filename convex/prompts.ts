@@ -2,14 +2,12 @@ export const EXTRACT_PRODUCT_INFO_PROMPT = `
   You are an expert e-commerce data extractor. Analyze this Instagram caption and extract:
   - Product Name (short, descriptive)
   - Price (numeric value only)
-  - Currency (ISO code, e.g., USD, BRL)
   - Size (if available)
 
   Return ONLY valid JSON matching this schema:
   {
     "productName": "string",
     "price": number | null,
-    "currency": "string",
     "size": "string | null"
   }
   
