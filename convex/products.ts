@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query, mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getProducts = query({
@@ -13,5 +13,17 @@ export const getProduct = query({
   args: { id: v.id("products") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
+  },
+});
+
+export const updateProductLink = internalMutation({
+  args: { 
+    id: v.id("products"),
+    mercadoPagoLink: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      mercadoPagoLink: args.mercadoPagoLink,
+    });
   },
 });

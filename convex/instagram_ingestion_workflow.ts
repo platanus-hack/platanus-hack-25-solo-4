@@ -3,6 +3,7 @@
 import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { Doc } from "./_generated/dataModel";
 import { extractProductDataFromCaption } from "./steps/parse_post";
 import { processAndUploadProductImage } from "./steps/process_image";
 
@@ -14,6 +15,12 @@ export const ingestInstagramPosts = internalAction({
   handler: async (ctx, args) => {
     console.log(`Processing ${args.posts.length} posts for request ${args.requestId}`);
     
+    const request: Doc<"catalog_requests"> | null = await ctx.runQuery(internal.requests.getRequest, { id: args.requestId });
+    if (!request) {
+      throw new Error("Request not found");
+    }
+    const handle = request.handle;
+
     const results = [];
 
     for (const post of args.posts) {
@@ -36,6 +43,23 @@ export const ingestInstagramPosts = internalAction({
         // 3. Image Processing
         const processedImageUrl = await processAndUploadProductImage(ctx, post.displayUrl, extracted.productName) || post.displayUrl;
 
+        // 4. Generate Mercado Pago Preference
+        let mercadoPagoLink: string | undefined;
+        try {
+            // Only attempt if we have a valid price and name
+            if (safePrice > 0 && extracted.productName) {
+                 const link = await ctx.runAction(internal.mercadopago.createPreference, {
+                    handle,
+                    title: extracted.productName,
+                    price: safePrice,
+                    imageUrl: processedImageUrl,
+                }) as string | null;
+                if (link) mercadoPagoLink = link;
+            }
+        } catch (e) {
+            console.error(`Failed to create MP preference for ${extracted.productName}:`, e);
+        }
+
         results.push({
           productName: extracted.productName,
           price: safePrice,
@@ -44,6 +68,7 @@ export const ingestInstagramPosts = internalAction({
           originalImageUrl: post.displayUrl,
           processedImageUrl: processedImageUrl,
           igPostUrl: post.url,
+          mercadoPagoLink,
         });
     }
 

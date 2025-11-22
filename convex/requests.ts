@@ -1,4 +1,4 @@
-import { mutation, internalMutation } from "./_generated/server";
+import { mutation, internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 
 export const create = mutation({
@@ -10,6 +10,13 @@ export const create = mutation({
       requestTime: Date.now(),
     });
     return requestId;
+  },
+});
+
+export const getRequest = internalQuery({
+  args: { id: v.id("catalog_requests") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
   },
 });
 
@@ -25,6 +32,7 @@ export const addProducts = internalMutation({
         originalImageUrl: v.string(),
         processedImageUrl: v.string(),
         igPostUrl: v.string(),
+        mercadoPagoLink: v.optional(v.string()),
       })
     ),
   },
@@ -38,6 +46,7 @@ export const addProducts = internalMutation({
         processedImageUrl: product.processedImageUrl,
         size: product.size || undefined,
         igPostUrl: product.igPostUrl,
+        mercadoPagoLink: product.mercadoPagoLink,
       });
     }
 

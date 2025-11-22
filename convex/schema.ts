@@ -18,7 +18,18 @@ export default defineSchema({
     processedImageUrl: v.optional(v.string()),
     productName: v.optional(v.string()),
     price: v.optional(v.number()),
+    currency: v.optional(v.string()),
     size: v.optional(v.string()),
     igPostUrl: v.string(),
+    mercadoPagoLink: v.optional(v.string()),
+    mercadoPagoPreferenceId: v.optional(v.string()),
   }),
+  merchants: defineTable({
+    handle: v.string(),
+    mpUserId: v.string(),
+    accessToken: v.string(),
+    refreshToken: v.string(),
+    expiresIn: v.number(),
+    updatedAt: v.number(),
+  }).index("by_handle", ["handle"]),
 });

@@ -57,6 +57,17 @@ export function ProductDetail({ productId, onClose }: ProductDetailProps) {
             </div>
 
             <div className="space-y-4">
+               {product.mercadoPagoLink && (
+                 <a 
+                   href={product.mercadoPagoLink}
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="block w-full py-3 bg-blue-600 text-white text-center font-semibold rounded-xl hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
+                 >
+                   Buy with Mercado Pago
+                 </a>
+               )}
+
                <a 
                  href={product.igPostUrl}
                  target="_blank" 
