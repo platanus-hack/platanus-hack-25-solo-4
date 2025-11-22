@@ -15,19 +15,19 @@ export function LatestListings() {
   if (products.length === 0) {
     return (
       <div className="w-full max-w-6xl mx-auto px-6 py-12">
-        <div className="text-gray-500">No listings found yet.</div>
+        <div className="text-gray-500 text-center">No listings found yet.</div>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-6xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-6">
+      <div className="flex flex-wrap justify-center gap-6">
         {products.map((product, index) => (
           <div 
             key={product._id} 
             onClick={() => setSelectedProductId(product._id)}
-            className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition cursor-pointer group ${
+            className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition cursor-pointer group w-full sm:w-72 md:w-56 ${
               index >= 3 ? 'hidden md:block' : ''
             }`}
           >
