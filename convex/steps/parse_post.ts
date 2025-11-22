@@ -29,7 +29,19 @@ export const extractProductDataFromCaption = traceable(async function extractPro
     // Clean up markdown code blocks if present
     const jsonString = text.replace(/```json\n|\n```/g, "").replace(/```/g, "").trim();
     
-    return JSON.parse(jsonString) as ExtractedProductData;
+    const data = JSON.parse(jsonString) as ExtractedProductData;
+
+    // Post-processing for price:
+    // If price is unrealistically low (e.g. < 500), assume it's in thousands.
+    // 500 CLP is ~0.50 USD. Very few items sold on Instagram are < 500 CLP.
+    // 5 -> 5000, 10 -> 10000, 100 -> 100000? 
+    // Let's be conservative and say < 100 implies thousands. 
+    // (100 CLP is negligible).
+    if (data.price !== null && data.price > 0 && data.price < 100) {
+        data.price = data.price * 1000;
+    }
+
+    return data;
   } catch (error) {
     console.error("Gemini extraction failed:", error);
     return null;
