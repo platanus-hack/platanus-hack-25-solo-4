@@ -18,9 +18,20 @@ export const scrapeInstagram = action({
     // Instagram Scraper Actor (apify/instagram-scraper)
     // Limit to 5 posts as per spec
     const runInput = {
-      usernames: [args.handle],
-      resultsLimit: 5,
-    };
+        "addParentData": false,
+        "directUrls": [
+          `https://www.instagram.com/${args.handle}`
+        ],
+        "enhanceUserSearchWithFacebookPage": false,
+        "isUserReelFeedURL": false,
+        "isUserTaggedFeedURL": false,
+        "resultsLimit": 1,
+        "resultsType": "posts",
+        "searchLimit": 1,
+        "searchType": "user"
+      }
+
+      
 
     try {
       // Start the actor and wait for it to finish
