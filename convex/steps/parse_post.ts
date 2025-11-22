@@ -1,6 +1,7 @@
 "use node";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { traceable } from "langsmith/traceable";
 import { EXTRACT_PRODUCT_INFO_PROMPT } from "../prompts";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -12,7 +13,7 @@ export interface ExtractedProductData {
   size: string | null;
 }
 
-export async function extractProductDataFromCaption(caption: string): Promise<ExtractedProductData | null> {
+export const extractProductDataFromCaption = traceable(async function extractProductDataFromCaption(caption: string): Promise<ExtractedProductData | null> {
   if (!caption) return null;
 
   try {
@@ -35,5 +36,5 @@ export async function extractProductDataFromCaption(caption: string): Promise<Ex
     console.error("Gemini extraction failed:", error);
     return null;
   }
-}
+}, { name: "extractProductDataFromCaption" });
 

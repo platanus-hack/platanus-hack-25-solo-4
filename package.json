@@ -16,6 +16,7 @@
     "@mercadopago/sdk-react": "^1.0.6",
     "apify-client": "^2.20.0",
     "convex": "^1.29.3",
+    "langsmith": "^0.3.81",
     "mercadopago": "^2.10.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

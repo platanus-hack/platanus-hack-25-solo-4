@@ -1,11 +1,43 @@
 "use node";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { traceable } from "langsmith/traceable";
 import { internal } from "../_generated/api";
 import { REMOVE_BACKGROUND_PROMPT } from "../prompts";
 import type { ActionCtx } from "../_generated/server";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+const processImageWithGemini = traceable(async (arrayBuffer: ArrayBuffer, contentType: string) => {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-image" });
+    
+    const imagePart = {
+        inlineData: {
+            data: Buffer.from(arrayBuffer).toString("base64"),
+            mimeType: contentType,
+        },
+    };
+    
+    const result = await model.generateContent([REMOVE_BACKGROUND_PROMPT, imagePart]);
+    
+    console.log("Nano Banana response received.");
+    
+    const response = result.response;
+    const candidates = response.candidates;
+    
+    if (candidates && candidates.length > 0 && candidates[0].content && candidates[0].content.parts) {
+        const generatedImagePart = candidates[0].content.parts.find(part => part.inlineData);
+        
+        if (generatedImagePart && generatedImagePart.inlineData) {
+            console.log("Found generated image in response.");
+            const base64Data = generatedImagePart.inlineData.data;
+            const mimeType = generatedImagePart.inlineData.mimeType || "image/png";
+            const buffer = Buffer.from(base64Data, "base64");
+            return new Blob([buffer], { type: mimeType });
+        }
+    }
+    return null;
+}, { name: "processImageWithGemini" });
 
 export async function processAndUploadProductImage(ctx: ActionCtx, imageUrl: string, productName: string): Promise<string | null> {
   try {
@@ -20,37 +52,12 @@ export async function processAndUploadProductImage(ctx: ActionCtx, imageUrl: str
 
     try {
         // 2. Process with Gemini 2.5 Flash Image (Nano Banana)
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-image" });
+        const processedBlob = await processImageWithGemini(arrayBuffer, contentType);
         
-        const imagePart = {
-            inlineData: {
-                data: Buffer.from(arrayBuffer).toString("base64"),
-                mimeType: contentType,
-            },
-        };
-        
-        const result = await model.generateContent([REMOVE_BACKGROUND_PROMPT, imagePart]);
-        
-        console.log("Nano Banana response received.");
-        
-        const response = result.response;
-        const candidates = response.candidates;
-        
-        if (candidates && candidates.length > 0 && candidates[0].content && candidates[0].content.parts) {
-            const generatedImagePart = candidates[0].content.parts.find(part => part.inlineData);
-            
-            if (generatedImagePart && generatedImagePart.inlineData) {
-                console.log("Found generated image in response.");
-                const base64Data = generatedImagePart.inlineData.data;
-                const mimeType = generatedImagePart.inlineData.mimeType || "image/png";
-                const buffer = Buffer.from(base64Data, "base64");
-                imageBlob = new Blob([buffer], { type: mimeType });
-            } else {
-                console.warn("No image data found in Gemini response. Falling back to original image.");
-                imageBlob = new Blob([arrayBuffer], { type: contentType });
-            }
+        if (processedBlob) {
+             imageBlob = processedBlob;
         } else {
-             console.warn("Invalid Gemini response structure. Falling back to original image.");
+             console.warn("No image data found in Gemini response or invalid structure. Falling back to original image.");
              imageBlob = new Blob([arrayBuffer], { type: contentType });
         }
 
