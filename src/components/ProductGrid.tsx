@@ -4,11 +4,16 @@ import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { ProductDetail } from "./ProductDetail";
 
-export function ProductGrid() {
-  const products = useQuery(api.products.getProducts);
+interface ProductGridProps {
+  handle?: string;
+}
+
+export function ProductGrid({ handle }: ProductGridProps = {}) {
+  const products = useQuery(api.products.getProductsByHandle, handle ? { handle } : "skip");
+  
   const [selectedProductId, setSelectedProductId] = useState<Id<"products"> | null>(null);
 
-  if (!products) {
+  if (products === undefined) {
     return (
       <div className="text-center py-10 text-gray-500">
         Loading products...
@@ -19,7 +24,9 @@ export function ProductGrid() {
   if (products.length === 0) {
     return (
       <div className="text-center py-10 text-gray-500">
-        No products found yet. Try searching for a handle!
+        {handle 
+          ? `No products found for @${handle}` 
+          : "No products found yet. Try searching for a handle!"}
       </div>
     );
   }
@@ -70,4 +77,3 @@ export function ProductGrid() {
     </div>
   );
 }
-

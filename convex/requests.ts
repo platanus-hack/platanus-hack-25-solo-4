@@ -37,6 +37,11 @@ export const addProducts = internalMutation({
     ),
   },
   handler: async (ctx, args) => {
+    const request = await ctx.db.get(args.requestId);
+    if (!request) {
+        throw new Error("Request not found");
+    }
+
     for (const product of args.products) {
       await ctx.db.insert("products", {
         requestId: args.requestId,
@@ -47,6 +52,7 @@ export const addProducts = internalMutation({
         size: product.size || undefined,
         igPostUrl: product.igPostUrl,
         mercadoPagoLink: product.mercadoPagoLink,
+        handle: request.handle,
       });
     }
 

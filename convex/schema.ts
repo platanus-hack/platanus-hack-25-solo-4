@@ -23,7 +23,8 @@ export default defineSchema({
     igPostUrl: v.string(),
     mercadoPagoLink: v.optional(v.string()),
     mercadoPagoPreferenceId: v.optional(v.string()),
-  }),
+    handle: v.optional(v.string()),
+  }).index("by_handle", ["handle"]),
   merchants: defineTable({
     handle: v.string(),
     mpUserId: v.string(),
