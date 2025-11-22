@@ -67,9 +67,17 @@ export const addProducts = internalMutation({
         handle: request.handle,
       });
     }
+  },
+});
 
+export const updateStatus = internalMutation({
+  args: {
+    requestId: v.id("catalog_requests"),
+    status: v.union(v.literal("pending"), v.literal("processing"), v.literal("completed"), v.literal("failed")),
+  },
+  handler: async (ctx, args) => {
     await ctx.db.patch(args.requestId, {
-      status: "completed",
+      status: args.status,
     });
   },
 });
