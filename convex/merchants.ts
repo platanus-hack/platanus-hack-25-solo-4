@@ -10,6 +10,13 @@ export const getMerchant = internalQuery({
     }
 });
 
+export const getDefaultMerchant = internalQuery({
+    args: {},
+    handler: async (ctx) => {
+        return await ctx.db.query("merchants").first();
+    }
+});
+
 export const saveMerchant = internalMutation({
     args: {
         handle: v.string(),
