@@ -3,7 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { internal } from "../_generated/api";
 import { REMOVE_BACKGROUND_PROMPT } from "../prompts";
-import { ActionCtx } from "../_generated/server";
+import type { ActionCtx } from "../_generated/server";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -66,4 +66,3 @@ export async function processAndUploadProductImage(ctx: ActionCtx, imageUrl: str
     return imageUrl;
   }
 }
-

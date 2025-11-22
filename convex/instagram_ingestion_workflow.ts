@@ -3,7 +3,7 @@
 import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { Doc } from "./_generated/dataModel";
+import type { Doc } from "./_generated/dataModel";
 import { extractProductDataFromCaption } from "./steps/parse_post";
 import { processAndUploadProductImage } from "./steps/process_image";
 
@@ -84,4 +84,3 @@ export const ingestInstagramPosts = internalAction({
     return { processed: results.length, valid: results };
   },
 });
-
