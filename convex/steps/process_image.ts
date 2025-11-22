@@ -30,9 +30,8 @@ export async function processAndUploadProductImage(ctx: ActionCtx, imageUrl: str
         };
         
         const result = await model.generateContent([REMOVE_BACKGROUND_PROMPT, imagePart]);
-        const response = await result.response;
         
-        console.log("Nano Banana response received.");
+        console.log("Nano Banana response received.", result.response);
         
         // TODO: Properly handle the processed image from Gemini if/when it returns the image data directly.
         // Currently using the original image as fallback/placeholder flow as the API response handling for image edits needs verification.

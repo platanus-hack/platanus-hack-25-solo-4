@@ -101,7 +101,7 @@ export const createPreference = internalAction({
         const merchant = await ctx.runQuery(internal.merchants.getMerchant, { handle: args.handle });
         
         let client: MercadoPagoConfig;
-        let marketplaceFee = 0; // Set your fee here if needed
+        const marketplaceFee = 0; // Set your fee here if needed
         
         if (merchant) {
             console.log(`Creating preference for merchant: ${args.handle}`);

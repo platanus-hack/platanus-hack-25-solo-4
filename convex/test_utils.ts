@@ -2,7 +2,6 @@
 
 import { action } from "./_generated/server";
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
 
 // This should be YOUR Production Access Token (Integrator Token)
 // Found in: Mercado Pago Developers -> Your Application -> Production Credentials -> Access Token
