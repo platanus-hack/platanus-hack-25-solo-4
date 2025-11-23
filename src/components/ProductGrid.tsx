@@ -208,7 +208,7 @@ export function ProductGrid({ handle }: ProductGridProps = {}) {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Header Status Area */}
-      {(phase !== 'reveal' || isProcessing) && (
+      {(phase !== 'reveal' || isProcessing) && productCount === 0 && (
          <div className="flex flex-col items-center justify-center space-y-2 min-h-[40px]">
             {showFallback && phase !== 'reveal' ? (
                 <p className="text-gray-500 animate-pulse text-center max-w-md">
