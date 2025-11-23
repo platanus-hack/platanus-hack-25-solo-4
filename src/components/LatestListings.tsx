@@ -8,7 +8,14 @@ export function LatestListings() {
     return <div className="h-20"></div>; 
   }
 
-  if (products.length === 0) {
+  // Filter out products that don't have the required fields
+  const validProducts = products?.filter(p => 
+    p.productName && 
+    p.price && 
+    (p.processedImageUrl || p.originalImageUrl)
+  ) || [];
+
+  if (validProducts.length === 0) {
     return null;
   }
 
@@ -19,7 +26,7 @@ export function LatestListings() {
       </h3>
       
       <div className="flex flex-wrap justify-center gap-4">
-        {products.map((product, index) => (
+        {validProducts.map((product, index) => (
           <div 
             key={product._id} 
             className={`bg-white overflow-hidden w-36 sm:w-40 ${
