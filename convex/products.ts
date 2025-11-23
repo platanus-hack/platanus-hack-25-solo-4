@@ -1,6 +1,6 @@
 import { query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Doc } from "./_generated/dataModel";
+import type { Doc } from "./_generated/dataModel";
 
 export const getProducts = query({
   args: { limit: v.optional(v.number()) },

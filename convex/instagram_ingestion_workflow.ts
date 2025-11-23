@@ -27,7 +27,6 @@ export const ingestInstagramPosts = internalAction({
     });
 
     const results = [];
-    let isCompleted = false;
 
     try {
         for (const post of args.posts) {
@@ -108,7 +107,6 @@ export const ingestInstagramPosts = internalAction({
             }
         }
         
-        isCompleted = true;
         await ctx.runMutation(internal.requests.updateStatus, {
           requestId: args.requestId,
           status: "completed",
