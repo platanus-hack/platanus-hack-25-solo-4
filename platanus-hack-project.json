@@ -1,4 +1,5 @@
 {
   "project-name": "vitrina",
-  "project-description-spanish": "Catálogo y link de pago para tiendas de Instagram."
+  "project-description-spanish": "Catálogo y link de pago para tiendas de Instagram.",
+  "deploy-url": "https://vitrina-poc.vercel.app/"
 }
