@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
@@ -7,6 +7,8 @@ import { ProductDetail } from "./ProductDetail";
 interface ProductGridProps {
   handle?: string;
 }
+
+type LoadingPhase = 'importing' | 'searching' | 'skeletons';
 
 function SkeletonProduct() {
   return (
@@ -45,6 +47,15 @@ export function ProductGrid({ handle }: ProductGridProps = {}) {
   const requestStatus = useQuery(api.requests.getRequestStatus, handle ? { handle } : "skip");
   
   const [selectedProductId, setSelectedProductId] = useState<Id<"products"> | null>(null);
+  const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>('importing');
+
+  useEffect(() => {
+    setLoadingPhase('importing');
+    const t1 = setTimeout(() => setLoadingPhase('searching'), 3000);
+    const t2 = setTimeout(() => setLoadingPhase('skeletons'), 6000);
+    
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [handle]);
 
   const isProductsLoading = products === undefined;
   const isStatusLoading = requestStatus === undefined;
@@ -58,8 +69,8 @@ export function ProductGrid({ handle }: ProductGridProps = {}) {
   // If we are done (not loading/processing), we show exactly what we have (even if 0 or 1).
   const skeletonCount = isLoading ? Math.max(0, 3 - productCount) : 0;
   
-  // Only show the text banner if we are loading AND have no products yet.
-  const showLoadingBanner = isLoading && productCount === 0;
+  // Only show the loading sequence if we are loading AND have no products yet AND haven't reached the skeleton phase.
+  const showLoadingSequence = isLoading && productCount === 0 && loadingPhase !== 'skeletons';
 
   if (!isLoading && productCount === 0) {
     if (requestStatus?.status === "failed") {
@@ -81,49 +92,49 @@ export function ProductGrid({ handle }: ProductGridProps = {}) {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {showLoadingBanner && (
-        <div className="w-full text-center py-2 animate-pulse text-gray-500 font-medium transition-opacity duration-500">
-          buscando prendas disponibles...
+      {showLoadingSequence ? (
+        <div className="w-full text-center py-20 animate-pulse text-gray-500 font-medium text-lg transition-opacity duration-500">
+          {loadingPhase === 'importing' ? "importando tus posts..." : "buscando prendas disponibles..."}
         </div>
-      )}
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products?.map((product) => (
-          <div 
-            key={product._id} 
-            onClick={() => setSelectedProductId(product._id)}
-            className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition cursor-pointer group animate-in fade-in duration-500"
-          >
-            <div className="aspect-square relative bg-gray-100 overflow-hidden">
-              <ImageWithPlaceholder 
-                src={product.processedImageUrl || product.originalImageUrl} 
-                alt={product.productName || "Product Image"}
-              />
-            </div>
-            
-            <div className="p-4">
-              <h3 className="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">
-                {product.productName || "Unknown Product"}
-              </h3>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products?.map((product) => (
+            <div 
+              key={product._id} 
+              onClick={() => setSelectedProductId(product._id)}
+              className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition cursor-pointer group animate-in fade-in duration-500"
+            >
+              <div className="aspect-square relative bg-gray-100 overflow-hidden">
+                <ImageWithPlaceholder 
+                  src={product.processedImageUrl || product.originalImageUrl} 
+                  alt={product.productName || "Product Image"}
+                />
+              </div>
               
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xl font-bold text-gray-900">
-                  {product.price ? `$${product.price}` : "N/A"}
-                </span>
-                {product.size && (
-                   <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded text-gray-600">
-                     {product.size}
-                   </span>
-                )}
+              <div className="p-4">
+                <h3 className="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">
+                  {product.productName || "Unknown Product"}
+                </h3>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xl font-bold text-gray-900">
+                    {product.price ? `$${product.price}` : "N/A"}
+                  </span>
+                  {product.size && (
+                     <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded text-gray-600">
+                       {product.size}
+                     </span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        
-        {Array.from({ length: skeletonCount }).map((_, index) => (
-          <SkeletonProduct key={`skeleton-${index}`} />
-        ))}
-      </div>
+          ))}
+          
+          {Array.from({ length: skeletonCount }).map((_, index) => (
+            <SkeletonProduct key={`skeleton-${index}`} />
+          ))}
+        </div>
+      )}
 
       {selectedProductId && (
         <ProductDetail 
