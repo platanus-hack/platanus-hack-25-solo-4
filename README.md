@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# Vitrina
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Turn any Instagram feed into an instant e-commerce catalog.
 
-Currently, two official plugins are available:
+## About
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Vitrina is a tool that takes an Instagram handle (like `@nikestore`), scrapes the latest posts, and uses AI to convert them into buyable products.
 
-## React Compiler
+1.  **Scrape:** We fetch the latest images and captions from Instagram.
+2.  **Analyze:** Gemini 3 Pro reads the caption to find the product name and price.
+3.  **Enhance:** We remove the background from the image for a clean studio look.
+4.  **Sell:** A payment link (Mercado Pago) is automatically generated for each item.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+*   **Frontend:** React, Vite, Tailwind CSS
+*   **Backend:** Convex (Serverless)
+*   **AI:** Gemini 3 Pro (Text), Google Nano Banana (Image)
+*   **Scraping:** Apify
+*   **Payments:** Mercado Pago
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2.  **Run the backend (Convex)**
+    ```bash
+    npx convex dev
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3.  **Run the frontend**
+    ```bash
+    npm run dev
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+4.  Open [http://localhost:5173](http://localhost:5173) to see the app.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Environment Variables
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+You will need to set up the following secrets in your Convex dashboard. Check `env.template` to see all required variables.
+
+*   `APIFY_API_TOKEN`
+*   `GOOGLE_API_KEY` (for Gemini)
+*   `MERCADO_PAGO_ACCESS_TOKEN`
+*   `CONVEX_DEPLOYMENT_KEY` (for Vercel)
+*   `VITE_CONVEX_URL`
