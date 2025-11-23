@@ -25,7 +25,7 @@ export const scrapeInstagram = action({
         "enhanceUserSearchWithFacebookPage": false,
         "isUserReelFeedURL": false,
         "isUserTaggedFeedURL": false,
-        "resultsLimit": 50,
+        "resultsLimit": 25,
         "resultsType": "posts",
         "searchLimit": 50,
         "searchType": "user"

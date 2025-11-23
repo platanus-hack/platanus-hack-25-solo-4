@@ -21,7 +21,6 @@ http.route({
         code,
         handle: state,
       });
-      console.log(code, state)
       
       // Redirect to frontend success page
       // We assume the frontend is served from the same domain or we know the URL.

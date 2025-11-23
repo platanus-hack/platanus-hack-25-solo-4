@@ -20,8 +20,6 @@ const processImageWithGemini = traceable(async (arrayBuffer: ArrayBuffer, conten
     
     const result = await model.generateContent([REMOVE_BACKGROUND_PROMPT, imagePart]);
     
-    console.log("Nano Banana response received.");
-    
     const response = result.response;
     const candidates = response.candidates;
     
@@ -29,7 +27,6 @@ const processImageWithGemini = traceable(async (arrayBuffer: ArrayBuffer, conten
         const generatedImagePart = candidates[0].content.parts.find(part => part.inlineData);
         
         if (generatedImagePart && generatedImagePart.inlineData) {
-            console.log("Found generated image in response.");
             const base64Data = generatedImagePart.inlineData.data;
             const mimeType = generatedImagePart.inlineData.mimeType || "image/png";
             const buffer = Buffer.from(base64Data, "base64");
@@ -62,7 +59,7 @@ export async function processAndUploadProductImage(ctx: ActionCtx, imageUrl: str
         }
 
     } catch (e) {
-        console.log("Nano Banana processing skipped/failed, using original:", e);
+        console.error("Gemini processing skipped/failed, using original:", e);
         imageBlob = new Blob([arrayBuffer], { type: contentType });
     }
 

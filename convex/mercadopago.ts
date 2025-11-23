@@ -98,18 +98,26 @@ export const createPreference = internalAction({
     },
     handler: async (ctx, args) => {
         // 1. Get the merchant
-        // Testing mode: Just use the default merchant (the only one registered)
-        const merchant = await ctx.runQuery(internal.merchants.getDefaultMerchant, {});
+        let merchant = await ctx.runQuery(internal.merchants.getMerchant, { handle: args.handle });
+        
+        // TEST ENVIRONMENT FALLBACK:
+        // If no specific merchant is found for the handle, check if there's a default merchant (test account).
+        if (!merchant) {
+             merchant = await ctx.runQuery(internal.merchants.getDefaultMerchant, {});
+             if (merchant) {
+                 console.log(`Using default test merchant for ${args.handle}`);
+             }
+        }
         
         let client: MercadoPagoConfig;
         const marketplaceFee = 0; // Set your fee here if needed
         
         if (merchant) {
-            console.log(`Creating preference for merchant: ${merchant.handle} (ignoring requested: ${args.handle})`);
+            console.log(`Creating preference for merchant: ${merchant.handle}`);
             // Initialize with SELLER'S access token
             client = new MercadoPagoConfig({ accessToken: merchant.accessToken });
         } else {
-            console.warn(`No merchant found (default). Cannot create preference.`);
+            console.warn(`No merchant found for handle ${args.handle} (and no default). Cannot create preference.`);
             return null;
         }
 
